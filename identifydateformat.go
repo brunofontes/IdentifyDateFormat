@@ -1,6 +1,7 @@
 package identifydateformat
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -58,15 +59,22 @@ func AddPossibleFormats(formats ...string) {
 	}
 }
 
-func identifydateformat(dates []string) []string {
+// IdentifyDateFormat runs all provided dates against DateFormats (a set of predefined date
+// formats). It returns all the date formats that can be parsed for the given
+// set of dates
+func IdentifyDateFormat(dates []string) ([]string, error) {
+	dateFormats := DateFormats
 	for _, date := range dates {
-		for i := 0; i < len(DateFormats); i++ {
-			_, err := time.Parse(DateFormats[i], date)
+		for i := 0; i < len(dateFormats); i++ {
+			_, err := time.Parse(dateFormats[i], date)
 			if err != nil {
-				DateFormats = append(DateFormats[:i], DateFormats[i+1:]...)
+				dateFormats = append(dateFormats[:i], dateFormats[i+1:]...)
 				i--
 			}
 		}
 	}
-	return DateFormats
+	if len(dateFormats) == 0 {
+		return dateFormats, fmt.Errorf("no date formats could be parsed with the given dates")
+	}
+	return dateFormats, nil
 }
