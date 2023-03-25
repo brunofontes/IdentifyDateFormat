@@ -35,8 +35,27 @@ var (
 // MONTH: 01
 // DAY: 02
 
-func definePossibleFormats(formats []string) {
+// DefinePossibleFormats replaces the original date formats to a custom one
+func DefinePossibleFormats(formats []string) {
 	DateFormats = formats
+}
+
+// AddPossibleFormats includes any new formats that were not present yet in
+// DateFormats
+func AddPossibleFormats(formats ...string) {
+	for i := 0; i < len(formats); i++ {
+		formatFound := false
+
+		for j := 0; j < len(DateFormats); j++ {
+			if formats[i] == DateFormats[j] {
+				formatFound = true
+				break
+			}
+		}
+		if !formatFound {
+			DateFormats = append(DateFormats, formats[i])
+		}
+	}
 }
 
 func identifydateformat(dates []string) []string {
